@@ -1,0 +1,15 @@
+node_modules/
+.DS_Store
+package-lock.json
+*.log
+*.blg
+*.log
+*.toc
+*.pdf
+*.dvi
+*.bbl
+*.orig
+*.aux
+*.*latexmk
+*.fls
+*.synctex.gz

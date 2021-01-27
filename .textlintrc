@@ -1,0 +1,21 @@
+{
+  "plugins": [
+    "latex2e"
+  ],
+  "filters": {
+    "comments": true
+  },
+  "rules": {
+    "spellcheck-tech-word": true,
+    "preset-ja-engineering-paper": true,
+    "preset-ja-spacing": true,
+    "preset-ja-technical-writing": {
+      "ja-no-mixed-period": {
+        "periodMark": "．"
+      },
+      "max-kanji-continuous-len": {
+        "max": 8
+      }
+    }
+  }
+}

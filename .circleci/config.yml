@@ -1,0 +1,53 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: paperist/alpine-texlive-ja:latest
+    steps:
+      - run:
+          name: "Get work commands"
+          command: apk add --no-cache git openssh make
+      - checkout
+      - run:
+          name: "Compile LaTeX to PDF"
+          command: make ${CIRCLE_TAG%-v*}
+      - run:
+          name: "Store PDF"
+          command: |
+            mkdir ./artifacts
+            mv *.pdf ./artifacts
+      - persist_to_workspace:
+          root: ./artifacts
+          paths:
+            - ./*.pdf
+  publish-github-release:
+    docker:
+      - image: cibuilds/github:0.10
+    steps:
+      - attach_workspace:
+          at: ./artifacts
+      - run:
+          name: "Publish Release on GitHub"
+          command: |
+            VERSION=${CIRCLE_TAG}
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /^\w+-v\d+\.\d+\.\d+$/
+            branches:
+              ignore: /.*/
+      - publish-github-release:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /^\w+-v\d+\.\d+\.\d+$/
+            branches:
+              ignore: /.*/
